@@ -1,0 +1,7 @@
+# Cloudflareを使う場合の書き換え例
+backend:
+  name: github
+  repo: your-username/your-repo # 自分のリポジトリ名
+  branch: main
+  # ここに自前で用意した認証サーバーのURLが必要になります
+  base_url: https://your-oauth-server.com
