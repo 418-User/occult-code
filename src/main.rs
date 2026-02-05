@@ -4,7 +4,6 @@ use yew_router::prelude::*;
 use serde::Deserialize;
 use reqwasm::http::Request;
 
-// --- 1. ルーティング定義 ---
 #[derive(Clone, Routable, PartialEq)]
 enum Route {
     #[at("/")]
@@ -18,13 +17,18 @@ enum Route {
     NotFound,
 }
 
-// --- 2. データ型定義 ---
 #[derive(Clone, PartialEq, Deserialize)]
 struct Post {
     id: usize,
     title: String,
     date: String,
     url: String,
+}
+
+// ★追加: JSONの「箱」の定義
+#[derive(Clone, PartialEq, Deserialize)]
+struct PostWrapper {
+    posts: Vec<Post>,
 }
 
 #[derive(Clone, PartialEq)]
@@ -34,7 +38,6 @@ struct CipherResult {
     breakdown: String,
 }
 
-// --- 3. コンポーネント: ゲマトリア計算機 ---
 struct GematriaDecoder {
     input_value: String,
     results: Vec<CipherResult>,
@@ -123,7 +126,6 @@ impl Component for GematriaDecoder {
     }
 }
 
-// --- 4. コンポーネント: ログ一覧（ここが修正ポイント） ---
 #[function_component(Logs)]
 fn logs() -> Html {
     let posts = use_state(|| Vec::<Post>::new());
@@ -133,15 +135,16 @@ fn logs() -> Html {
         use_effect_with((), move |_| {
             let posts = posts.clone();
             wasm_bindgen_futures::spawn_local(async move {
-                // posts.json を取得しに行く
-                let fetched_posts: Vec<Post> = Request::get("/posts.json")
+                // ★修正: JSONを PostWrapper 型として受け取る
+                let fetched_wrapper: PostWrapper = Request::get("/posts.json")
                     .send()
                     .await
                     .unwrap()
                     .json()
                     .await
                     .unwrap();
-                posts.set(fetched_posts);
+                // 中身の .posts をセットする
+                posts.set(fetched_wrapper.posts);
             });
             || ()
         });
@@ -153,7 +156,6 @@ fn logs() -> Html {
             <p>{ "Accessing archived protocols..." }</p>
             
             <ul style="margin-top: 1rem; list-style: none; padding: 0;">
-                // 取得したデータをループ表示
                 { for posts.iter().map(|post| html! {
                     <li style="margin-bottom: 1.5rem; border-left: 2px solid #333; padding-left: 10px;">
                         <span style="color: #888; font-size: 0.8rem;">{ &post.date }</span><br/>
@@ -169,7 +171,6 @@ fn logs() -> Html {
     }
 }
 
-// --- 5. メインアプリ ---
 fn switch(routes: Route) -> Html {
     match routes {
         Route::Home => html! { <GematriaDecoder /> },

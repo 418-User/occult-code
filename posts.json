@@ -1,14 +1,16 @@
-[
-  {
-    "id": 1,
-    "title": "Protocol 418 Initiated",
-    "date": "2026-02-03",
-    "url": "#"
-  },
-  {
-    "id": 2,
-    "title": "Gematria Algorithm Test",
-    "date": "2026-02-04",
-    "url": "#"
-  }
-]
+{
+  "posts": [
+    {
+      "id": 1,
+      "title": "Protocol 418 Initiated",
+      "date": "2026-02-03",
+      "url": "#"
+    },
+    {
+      "id": 2,
+      "title": "Gematria Algorithm Test",
+      "date": "2026-02-04",
+      "url": "#"
+    }
+  ]
+}
