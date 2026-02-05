@@ -1,50 +1,65 @@
-/* style.css - Occult Code Terminal Theme */
-
+/* --- 1. 基本設定（黒背景・緑文字） --- */
 :root {
-    --bg-color: #050505;       /* 漆黒 */
-    --text-color: #00ff41;     /* マトリックス・グリーン */
-    --accent-color: #dbf000;   /* 警告のような黄色 */
-    --scanline-color: rgba(0, 255, 65, 0.05);
+    --terminal-green: #0f0;
+    --terminal-glow: #0f0;
+    --bg-color: #000;
 }
 
 body {
     background-color: var(--bg-color);
-    color: var(--text-color);
-    font-family: 'Courier New', 'Consolas', monospace; /* 等幅フォント */
+    color: var(--terminal-green);
+    font-family: 'Courier New', Courier, monospace;
     margin: 0;
-    padding: 2rem;
+    padding: 20px;
     height: 100vh;
-    overflow-x: hidden;
-    text-shadow: 0 0 5px rgba(0, 255, 65, 0.5); /* 文字を少し発光させる */
+    overflow: hidden; /* 画面外へのはみ出しを防止 */
+    position: relative;
 }
 
-/* リンクのデザイン */
+/* --- 2. CRTモニタ風エフェクト（走査線） --- */
+body::before {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(
+        rgba(18, 16, 16, 0) 50%, 
+        rgba(0, 0, 0, 0.25) 50%
+    ), linear-gradient(
+        90deg, 
+        rgba(255, 0, 0, 0.06), 
+        rgba(0, 255, 0, 0.02), 
+        rgba(0, 0, 255, 0.06)
+    );
+    z-index: 2;
+    background-size: 100% 2px, 3px 100%;
+    pointer-events: none; /* マウス操作を邪魔しない */
+}
+
+/* --- 3. リンクのデザイン（ホバー時に反転） --- */
 a {
-    color: var(--text-color);
+    color: var(--terminal-green);
     text-decoration: none;
-    border-bottom: 1px dashed var(--text-color);
-    transition: all 0.3s ease;
+    transition: all 0.3s;
 }
-
 a:hover {
-    background-color: var(--text-color);
+    background-color: var(--terminal-green);
     color: var(--bg-color);
-    box-shadow: 0 0 10px var(--text-color);
+    box-shadow: 0 0 10px var(--terminal-glow);
 }
 
-/* 記事やコンテンツの枠組み */
-h1, h2, h3 {
-    text-transform: uppercase; /* 大文字に統一 */
-    border-left: 5px solid var(--text-color);
-    padding-left: 1rem;
-    margin-top: 2rem;
-    letter-spacing: 0.1rem;
+/* --- 4. テキストの発光（グロー効果） --- */
+h1, h2, p, li, span, input {
+    text-shadow: 0 0 5px var(--terminal-glow);
 }
 
-/* 点滅するカーソル演出 */
+/* --- 5. 点滅カーソル --- */
 .cursor-blink::after {
-    content: '█';
-    animation: blink 1s infinite;
+    content: "█";
+    animation: blink 1s step-end infinite;
     margin-left: 5px;
 }
 
@@ -53,30 +68,12 @@ h1, h2, h3 {
     50% { opacity: 0; }
 }
 
-/* CRTモニターのような走査線エフェクト（お好みで） */
-body::before {
-    content: "";
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: linear-gradient(
-        to bottom,
-        transparent 50%,
-        var(--scanline-color) 51%
-    );
-    background-size: 100% 4px;
-    pointer-events: none; /* クリックを邪魔しない */
-    z-index: 999;
-}
-
-.status-line {
-    font-size: 0.8rem;
-    color: var(--accent-color); /* 黄色っぽい色 */
-    margin-bottom: 2rem;
-}
-
-.separator {
-    margin: 0 10px;
-    color: #555;
+/* --- 6. レイアウト調整 --- */
+.terminal-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1; /* エフェクトより手前に表示 */
 }
 
 nav ul {
@@ -87,87 +84,47 @@ nav ul {
 }
 
 .dashed-line {
-    border: 0;
-    border-top: 1px dashed var(--text-color);
-    margin: 2rem 0;
+    border: none;
+    border-top: 1px dashed var(--terminal-green);
+    margin: 20px 0;
     opacity: 0.5;
 }
 
-footer {
-    margin-top: 4rem;
-    font-size: 0.7rem;
-    opacity: 0.7;
-    text-align: center;
-}
-
-/* ターミナル風入力フォーム */
+/* 入力欄のデザイン */
 .input-group {
-    margin-top: 2rem;
-    border: 1px dashed var(--text-color);
-    padding: 1rem;
-    background-color: rgba(0, 255, 65, 0.05);
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    border: 1px solid var(--terminal-green);
+    padding: 10px;
 }
 
 .cmd-input {
-    background-color: transparent;
+    background: transparent;
     border: none;
-    color: var(--text-color);
+    color: var(--terminal-green);
     font-family: inherit;
     font-size: 1.2rem;
-    width: 60%;
+    width: 100%;
     outline: none;
-    caret-color: var(--text-color); /* カーソルも緑に */
-    border-bottom: 2px solid var(--text-color);
 }
 
-.cmd-input::placeholder {
-    color: rgba(0, 255, 65, 0.3);
-}
-
-.result-display {
-    margin-top: 1rem;
-    font-size: 1.5rem;
-    font-weight: bold;
-}
-
-/* マルチサイファー表示用グリッド */
+/* ゲマトリア結果カード */
 .cipher-grid {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
-    margin-top: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
 }
 
 .cipher-card {
-    border: 1px solid rgba(0, 255, 65, 0.3);
-    padding: 10px;
-    background: rgba(0, 20, 0, 0.5);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.cipher-label {
-    font-size: 0.8rem;
-    color: #888;
-    width: 100px;
-    text-transform: uppercase;
+    border: 1px solid var(--terminal-green);
+    padding: 15px;
+    text-align: center;
 }
 
 .cipher-value {
-    font-size: 1.5rem;
-    color: var(--accent-color);
+    display: block;
+    font-size: 2rem;
     font-weight: bold;
-    min-width: 60px;
-    text-align: right;
-}
-
-.cipher-breakdown {
-    font-size: 0.8rem;
-    color: var(--text-color);
-    opacity: 0.7;
-    flex-grow: 1;
-    text-align: right;
-    margin-right: 1rem;
-    font-family: monospace;
+    margin-top: 10px;
 }
